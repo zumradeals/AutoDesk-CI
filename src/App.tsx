@@ -373,7 +373,7 @@ function App() {
                     Licence 1 an
                   </h3>
                   <div className="text-5xl font-bold text-green-600 mb-2">
-                    11 500
+                    25 000
                   </div>
                   <p className="text-gray-600 mb-3">FCFA / an</p>
                   <div className="inline-block bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-bold">
@@ -438,7 +438,7 @@ function App() {
                 </h3>
                 <p className="text-gray-600 mb-4">Licence officielle</p>
                 <div className="text-4xl font-bold text-[#0a3d62] mb-2">
-                  11 500 FCFA
+                  25 000 FCFA
                 </div>
                 <p className="text-sm text-gray-500">Activation immédiate</p>
               </div>
@@ -480,9 +480,9 @@ function App() {
                 </h3>
                 <p className="text-blue-100 mb-4">Meilleure offre</p>
                 <div className="text-4xl font-bold text-white mb-2">
-                  25 000 FCFA
+                  45 000 FCFA
                 </div>
-                <p className="text-sm text-blue-100">Économisez 21%</p>
+                <p className="text-sm text-blue-100">Économisez 40%</p>
               </div>
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center text-white">
