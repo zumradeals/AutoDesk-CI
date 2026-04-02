@@ -4,18 +4,9 @@ import { YouTubeEmbed } from './components/YouTubeEmbed';
 
 function App() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [licensesSold, setLicensesSold] = useState(147);
   const whatsappNumber = '2250718713781';
   const whatsappMessage = encodeURIComponent('Bonjour 👋, je souhaite activer une licence Autodesk. Durée souhaitée : 1 an ou 3 ans. Merci !');
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
-
-  // Compteur de ventes animé
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLicensesSold(prev => prev + 1);
-    }, 45000);
-    return () => clearInterval(interval);
-  }, []);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -64,16 +55,6 @@ function App() {
         </nav>
       </header>
 
-      {/* Bannière Urgence */}
-      <div className="fixed top-16 left-0 right-0 bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 px-4 z-40 shadow-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-center space-x-3">
-          <AlertCircle className="w-5 h-5 animate-pulse" />
-          <p className="text-sm sm:text-base font-bold text-center">
-            ⚡ OFFRE LIMITÉE : Plus que 35 licences disponibles cette semaine !
-          </p>
-          <AlertCircle className="w-5 h-5 animate-pulse" />
-        </div>
-      </div>
 
       {/* Hero Section */}
       <section id="hero" className="pt-40 pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-blue-50">
@@ -84,10 +65,6 @@ function App() {
                 <div className="inline-flex items-center bg-blue-100 text-[#0a3d62] px-4 py-2 rounded-full text-sm font-medium">
                   <Shield className="w-4 h-4 mr-2" />
                   100% Licences Officielles
-                </div>
-                <div className="inline-flex items-center bg-green-100 text-green-700 px-4 py-2 rounded-full text-sm font-bold animate-pulse">
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  {licensesSold}+ licences vendues ce mois-ci
                 </div>
               </div>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
