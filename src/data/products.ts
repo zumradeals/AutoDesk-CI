@@ -60,7 +60,7 @@ Autodesk-CI vous accompagne dans l'activation et la prise en main de votre accè
     images: [
       {
         id: 'img-autodesk-1',
-        url: 'https://media.autodesk-ci.com/autodesk-ci.png',
+        url: 'https://media.autodesk-ci.com/autodesk-ci.png?v=2',
         alt: 'Suite Autodesk — AutoCAD, Revit, 3ds Max',
         isMain: true,
       },

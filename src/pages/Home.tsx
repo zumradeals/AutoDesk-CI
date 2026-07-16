@@ -106,7 +106,7 @@ export function Home() {
               {featuredAutodesk && (
                 <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
                   <img
-                    src="https://media.autodesk-ci.com/autodesk-ci.png"
+                    src="https://media.autodesk-ci.com/autodesk-ci.png?v=2"
                     alt="Suite Autodesk — AutoCAD, Revit, 3ds Max"
                     className="w-full h-80 object-contain bg-white"
                     fetchPriority="high"
