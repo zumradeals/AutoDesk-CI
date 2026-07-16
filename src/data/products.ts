@@ -60,7 +60,7 @@ Autodesk-CI vous accompagne dans l'activation et la prise en main de votre accè
     images: [
       {
         id: 'img-autodesk-1',
-        url: 'https://media.ikomagroup.net/xara/autodesk.PNG',
+        url: 'https://media.autodesk-ci.com/autodesk-ci.png',
         alt: 'Suite Autodesk — AutoCAD, Revit, 3ds Max',
         isMain: true,
       },
