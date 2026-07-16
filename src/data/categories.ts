@@ -1,0 +1,48 @@
+import type { Category } from '../types';
+
+export const defaultCategories: Category[] = [
+  {
+    id: 'cat-architecture-bim',
+    slug: 'architecture-bim',
+    name: 'Architecture et BIM',
+    description: 'Logiciels de conception architecturale et de modélisation BIM pour les professionnels du bâtiment.',
+    icon: 'building',
+    status: 'active',
+    sortOrder: 1,
+    seoTitle: 'Logiciels Architecture et BIM — Autodesk CI',
+    seoDescription: 'Découvrez nos solutions logicielles pour architectes et professionnels du BIM : AutoCAD, Archicad, SketchUp Pro.',
+  },
+  {
+    id: 'cat-rendu-visualisation',
+    slug: 'rendu-visualisation',
+    name: 'Rendu et Visualisation',
+    description: 'Logiciels de rendu 3D et de visualisation architecturale pour des présentations professionnelles.',
+    icon: 'image',
+    status: 'active',
+    sortOrder: 2,
+    seoTitle: 'Logiciels de Rendu 3D — Autodesk CI',
+    seoDescription: 'Lumion Pro, Enscape, V-Ray : les meilleurs outils de rendu et visualisation 3D pour vos projets architecturaux.',
+  },
+  {
+    id: 'cat-industrie-mecanique',
+    slug: 'industrie-mecanique',
+    name: 'Industrie et Mécanique',
+    description: 'Logiciels de conception mécanique et industrielle pour ingénieurs et bureaux d\'études.',
+    icon: 'settings',
+    status: 'active',
+    sortOrder: 3,
+    seoTitle: 'Logiciels Industrie et Mécanique — Autodesk CI',
+    seoDescription: 'SolidWorks et solutions CAO pour la conception mécanique et industrielle en Côte d\'Ivoire.',
+  },
+  {
+    id: 'cat-bureautique-documents',
+    slug: 'bureautique-documents',
+    name: 'Bureautique et Documents',
+    description: 'Suites bureautiques et logiciels de gestion documentaire pour les professionnels.',
+    icon: 'file-text',
+    status: 'active',
+    sortOrder: 4,
+    seoTitle: 'Logiciels Bureautique — Autodesk CI',
+    seoDescription: 'Microsoft Office et Acrobat Pro : les indispensables de la bureautique professionnelle.',
+  },
+];
