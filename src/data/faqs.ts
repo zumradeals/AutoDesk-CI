@@ -1,0 +1,68 @@
+import type { FaqItem } from '../types';
+
+export const defaultFaqs: FaqItem[] = [
+  {
+    id: 'faq-1',
+    question: 'Comment fonctionne l\'activation d\'un logiciel ?',
+    answer: 'Après confirmation de votre commande, nous configurons votre accès dans les systèmes du fournisseur (Autodesk, Microsoft, etc.) avec votre adresse email. Vous recevez ensuite les instructions d\'installation et d\'activation par WhatsApp ou email.',
+    categoryLabel: 'Activation et installation',
+    sortOrder: 1,
+    status: 'published',
+  },
+  {
+    id: 'faq-2',
+    question: 'Combien de temps prend l\'activation ?',
+    answer: 'Pour les logiciels Autodesk, l\'activation est généralement effectuée en moins de 15 minutes après confirmation du paiement. Pour les autres logiciels, le délai est de 24 à 48 heures ouvrées selon la solution.',
+    categoryLabel: 'Activation et installation',
+    sortOrder: 2,
+    status: 'published',
+  },
+  {
+    id: 'faq-3',
+    question: 'Puis-je installer le logiciel sur plusieurs ordinateurs ?',
+    answer: 'Cela dépend du logiciel et du type de licence. Pour Autodesk, vous pouvez généralement installer sur jusqu\'à 3 appareils et utiliser sur un à la fois. Pour les autres solutions, nous vous précisons les conditions lors de votre commande.',
+    categoryLabel: 'Utilisation',
+    sortOrder: 3,
+    status: 'published',
+  },
+  {
+    id: 'faq-4',
+    question: 'Quels moyens de paiement acceptez-vous ?',
+    answer: 'Nous acceptons les paiements par Mobile Money (Orange Money, MTN Mobile Money, Wave), virement bancaire, et carte bancaire. Contactez-nous via WhatsApp pour connaître les options disponibles selon votre pays.',
+    categoryLabel: 'Paiement',
+    sortOrder: 4,
+    status: 'published',
+  },
+  {
+    id: 'faq-5',
+    question: 'Proposez-vous un support technique après l\'activation ?',
+    answer: 'Oui, nous offrons un accompagnement en français via WhatsApp pour l\'installation et la prise en main. Notre équipe est disponible du lundi au samedi de 8h à 20h.',
+    categoryLabel: 'Support',
+    sortOrder: 5,
+    status: 'published',
+  },
+  {
+    id: 'faq-6',
+    question: 'Livrez-vous dans toute l\'Afrique francophone ?',
+    answer: 'Oui, nos solutions logicielles sont livrées en ligne et disponibles dans toute l\'Afrique francophone : Côte d\'Ivoire, Sénégal, Mali, Burkina Faso, Cameroun, Congo, Madagascar et tous les autres pays francophones.',
+    categoryLabel: 'Livraison et zone',
+    sortOrder: 6,
+    status: 'published',
+  },
+  {
+    id: 'faq-7',
+    question: 'Que faire si j\'ai un problème après l\'installation ?',
+    answer: 'Contactez-nous directement sur WhatsApp. Nous intervenons rapidement pour diagnostiquer et résoudre tout problème technique lié à l\'installation ou à l\'activation de vos logiciels.',
+    categoryLabel: 'Support',
+    sortOrder: 7,
+    status: 'published',
+  },
+  {
+    id: 'faq-8',
+    question: 'Proposez-vous des tarifs pour les entreprises et les écoles ?',
+    answer: 'Oui, nous proposons des tarifs dégressifs pour les achats de plusieurs licences, les bureaux d\'études, les universités et les institutions. Contactez-nous pour obtenir un devis personnalisé.',
+    categoryLabel: 'Tarifs',
+    sortOrder: 8,
+    status: 'published',
+  },
+];
