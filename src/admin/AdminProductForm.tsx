@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useStore } from '../store';
 import type { Product } from '../types';
-import { Save, ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { Save, ArrowLeft, Plus, Trash2, Upload, X } from 'lucide-react';
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -91,6 +91,16 @@ export function AdminProductForm() {
     set('faqs', form.faqs.filter((_, i) => i !== index));
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      set('images', [{ id: generateId(), url: reader.result as string, alt: form.name, isMain: true }]);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const inputCls = 'w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500';
   const labelCls = 'block text-xs font-medium text-gray-400 mb-1';
 
@@ -161,17 +171,24 @@ export function AdminProductForm() {
         {/* Image */}
         <section className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
           <h2 className="text-white font-semibold">Image principale</h2>
-          <div>
-            <label className={labelCls}>URL de l'image</label>
-            <input
-              value={form.images[0]?.url || ''}
-              onChange={(e) => set('images', [{ id: generateId(), url: e.target.value, alt: form.name, isMain: true }])}
-              className={inputCls}
-              placeholder="https://..."
-            />
-          </div>
-          {form.images[0]?.url && (
-            <img src={form.images[0].url} alt="Aperçu" className="h-40 w-full object-cover rounded-lg" />
+          {form.images[0]?.url ? (
+            <div className="relative">
+              <img src={form.images[0].url} alt="Aperçu" className="h-48 w-full object-cover rounded-lg" />
+              <button
+                type="button"
+                onClick={() => set('images', [])}
+                className="absolute top-2 right-2 flex items-center gap-1 bg-red-600 hover:bg-red-500 text-white text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors"
+              >
+                <X className="w-3.5 h-3.5" /> Supprimer
+              </button>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-gray-800/40 transition-all group">
+              <Upload className="w-8 h-8 text-gray-500 group-hover:text-blue-400 mb-2 transition-colors" />
+              <span className="text-sm text-gray-300 group-hover:text-white transition-colors">Cliquer pour choisir une image</span>
+              <span className="text-xs text-gray-500 mt-1">PNG, JPG, WEBP — max 5 Mo</span>
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            </label>
           )}
         </section>
 
