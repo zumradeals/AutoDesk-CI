@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { Layout } from './components/layout/Layout';
 import { Home } from './pages/Home';
 import { Catalogue } from './pages/Catalogue';
 import { ProductPage } from './pages/ProductPage';
+import { AutodeskOfferPage } from './pages/AutodeskOfferPage';
 import { MetierPage } from './pages/MetierPage';
 import { About } from './pages/About';
 import { Faq } from './pages/Faq';
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/catalogue" element={<Catalogue />} />
             <Route path="/produit/:slug" element={<ProductPage />} />
+            <Route path="/offre/autodesk" element={<AutodeskOfferPage />} />
             <Route path="/metiers/:slug" element={<MetierPage />} />
             <Route path="/a-propos" element={<About />} />
             <Route path="/faq" element={<Faq />} />
