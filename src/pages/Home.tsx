@@ -1,41 +1,97 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import type { LucideIcon } from 'lucide-react';
 import {
-  ArrowRight, CheckCircle, Shield, Headphones,
-  Building2, Image, Settings2, FileText, MessageCircle,
-  ChevronDown, Star, Users, Zap
+  ArrowRight,
+  BadgeCheck,
+  Building2,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock3,
+  FileText,
+  Headphones,
+  Image,
+  MessageCircle,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+  Star,
+  Users,
+  Zap,
 } from 'lucide-react';
 import { useStore } from '../store';
 import { ProductCard } from '../components/product/ProductCard';
 import { WhatsAppButton } from '../components/ui/WhatsAppButton';
 import { buildWhatsappUrl } from '../utils/whatsapp';
-import { useState } from 'react';
-import { YouTubeEmbed } from '../components/YouTubeEmbed';
 
-const categoryIcons: Record<string, React.FC<any>> = {
+const categoryIcons: Record<string, LucideIcon> = {
   building: Building2,
   image: Image,
   settings: Settings2,
   'file-text': FileText,
 };
 
-const faqHome = [
-  { q: 'Les logiciels sont-ils authentiques ?', a: 'Oui, nous activons chaque logiciel via les systèmes officiels des éditeurs (Autodesk, Microsoft, Adobe, etc.). Vous recevez un accès officiel avec mises à jour et support.' },
-  { q: 'Combien de temps prend l\'activation ?', a: 'Pour Autodesk, l\'activation est faite en moins de 15 minutes. Pour les autres logiciels, comptez 24 à 48 heures ouvrées selon la solution.' },
-  { q: 'Vous livrez dans toute l\'Afrique francophone ?', a: 'Oui, nos logiciels sont livrés en ligne dans toute la sous-région : Côte d\'Ivoire, Sénégal, Mali, Burkina Faso, Cameroun, et tous les pays francophones.' },
-  { q: 'Proposez-vous un support après installation ?', a: 'Oui, notre équipe est disponible du lundi au samedi via WhatsApp pour vous accompagner à l\'installation et répondre à vos questions.' },
+const homeFaqs = [
+  {
+    q: 'Comment se déroule la commande ?',
+    a: 'Choisissez votre logiciel puis écrivez-nous sur WhatsApp. Un conseiller confirme la bonne offre, le mode de paiement et vous accompagne jusqu’à l’installation.',
+  },
+  {
+    q: 'Quel est le délai d’activation ?',
+    a: 'L’activation Autodesk est généralement réalisée en moins de 15 minutes après confirmation. Le délai exact des autres solutions est indiqué avant le paiement.',
+  },
+  {
+    q: 'Puis-je payer avec Mobile Money ?',
+    a: 'Oui. Nous acceptons notamment Orange Money, MTN MoMo, Wave et le virement. Les options disponibles sont confirmées au moment de la commande.',
+  },
+  {
+    q: 'Proposez-vous une assistance après l’achat ?',
+    a: 'Oui. Notre équipe vous accompagne en français pour l’installation et reste disponible sur WhatsApp en cas de difficulté.',
+  },
+];
+
+const guarantees = [
+  { icon: Clock3, title: 'Activation rapide', text: 'Autodesk en moins de 15 min' },
+  { icon: Headphones, title: 'Support humain', text: 'Accompagnement en français' },
+  { icon: ShieldCheck, title: 'Paiement flexible', text: 'Mobile Money ou virement' },
+];
+
+const steps = [
+  {
+    number: '01',
+    title: 'Choisissez',
+    text: 'Trouvez le logiciel et l’offre adaptés à votre activité.',
+  },
+  {
+    number: '02',
+    title: 'Confirmez',
+    text: 'Échangez avec un conseiller sur WhatsApp avant de payer.',
+  },
+  {
+    number: '03',
+    title: 'Recevez',
+    text: 'Nous préparons vos accès et vous guidons pour l’installation.',
+  },
 ];
 
 export function Home() {
   const { products, categories, testimonials, settings } = useStore();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const publishedProducts = products.filter((p) => p.status === 'published');
-  const popularProducts = publishedProducts.filter((p) => p.isPopular).slice(0, 4);
-  const featuredAutodesk = publishedProducts.find((p) => p.slug === 'autodesk');
-  const activeCategories = categories.filter((c) => c.status === 'active');
+  const publishedProducts = products.filter((product) => product.status === 'published');
+  const popularProducts = publishedProducts.filter((product) => product.isPopular).slice(0, 3);
+  const featuredAutodesk = publishedProducts.find((product) => product.slug === 'autodesk');
+  const activeCategories = categories.filter((category) => category.status === 'active').slice(0, 4);
+  const visibleTestimonials = testimonials
+    .filter((testimonial) => testimonial.status === 'published')
+    .slice(0, 3);
 
-  const whatsappUrl = buildWhatsappUrl(settings.whatsappNumber, settings.whatsappDefaultMessage);
+  const whatsappUrl = buildWhatsappUrl(
+    settings.whatsappNumber,
+    settings.whatsappDefaultMessage
+  );
 
   return (
     <>
@@ -49,107 +105,186 @@ export function Home() {
         <meta property="og:type" content="website" />
       </Helmet>
 
-      {/* ── HERO ── */}
-      <section className="bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-20 pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-navy px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-                <Shield className="w-4 h-4" />
-                Logiciels professionnels pour l'Afrique
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight mb-5">
-                Logiciels professionnels,{' '}
-                <span className="text-navy">accessibles en Afrique</span>
-              </h1>
-              <p className="text-lg text-gray-600 mb-3 leading-relaxed">
-                AutoCAD · Revit · 3ds Max · SolidWorks · Lumion · SketchUp et plus
-              </p>
-              <p className="text-base text-gray-500 mb-10">
-                Activation rapide • Support en français • Paiement Mobile Money
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/catalogue"
-                  className="inline-flex items-center justify-center gap-2 bg-navy text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-navy-dark transition-colors shadow-md"
-                >
-                  Voir le catalogue
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
+      <section className="relative overflow-hidden bg-[#061f35] px-4 pb-16 pt-12 text-white sm:px-6 sm:pb-20 sm:pt-16 lg:px-8 lg:pb-24 lg:pt-20">
+        <div className="absolute -right-32 -top-32 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="absolute -bottom-40 left-1/3 h-96 w-96 rounded-full bg-blue-500/15 blur-3xl" />
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr] lg:gap-16">
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3.5 py-2 text-xs font-semibold text-blue-50 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_0_4px_rgba(52,211,153,.14)]" />
+              Service disponible en Côte d’Ivoire
+            </div>
+
+            <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-[-0.035em] sm:text-5xl lg:text-[3.7rem]">
+              Les logiciels qui font avancer{' '}
+              <span className="text-sky-300">vos projets.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">
+              Équipez votre activité avec Autodesk, SketchUp, Lumion et bien plus.
+              Un conseiller vous accompagne en français, de la commande à l’installation.
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              {featuredAutodesk ? (
+                <WhatsAppButton
+                  message={featuredAutodesk.whatsappMessage}
+                  productId={featuredAutodesk.id}
+                  productName={featuredAutodesk.name}
+                  label="Commander sur WhatsApp"
+                  size="lg"
+                  className="rounded-xl shadow-[0_16px_40px_rgba(37,211,102,.24)]"
+                />
+              ) : (
                 <a
                   href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white px-8 py-4 rounded-xl font-semibold text-base hover:bg-[#20bd5a] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-8 py-4 font-bold text-white shadow-[0_16px_40px_rgba(37,211,102,.24)] transition hover:bg-[#20bd5a]"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  WhatsApp
+                  <MessageCircle className="h-5 w-5" />
+                  Commander sur WhatsApp
                 </a>
+              )}
+              <Link
+                to="/catalogue"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-4 font-semibold text-white transition hover:bg-white/15"
+              >
+                Explorer le catalogue
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-300">
+              {['Conseil avant achat', 'Paiement Mobile Money', 'Support en français'].map(
+                (item) => (
+                  <span key={item} className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-emerald-400" />
+                    {item}
+                  </span>
+                )
+              )}
+            </div>
+          </div>
+
+          <div className="relative mx-auto w-full max-w-xl">
+            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-br from-sky-400/20 to-transparent blur-xl" />
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/15 bg-white p-4 text-slate-900 shadow-2xl sm:p-5">
+              <div className="flex items-center justify-between px-1 pb-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[.16em] text-slate-400">
+                    Offre la plus demandée
+                  </p>
+                  <p className="mt-1 text-lg font-extrabold">Autodesk All Apps</p>
+                </div>
+                <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700">
+                  Disponible
+                </span>
               </div>
 
-              {/* Trust indicators */}
-              <div className="mt-12 flex flex-wrap gap-6">
-                {[
-                  { icon: Zap, label: 'Activation rapide' },
-                  { icon: Shield, label: 'Accès officiels' },
-                  { icon: Headphones, label: 'Support français 7j/7' },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2 text-sm text-gray-600">
-                    <Icon className="w-4 h-4 text-navy" />
-                    {label}
-                  </div>
-                ))}
+              <div className="relative overflow-hidden rounded-2xl bg-slate-50">
+                <img
+                  src="https://media.autodesk-ci.com/autodesk-ci.png?v=2"
+                  alt="Collection de logiciels Autodesk"
+                  className="h-56 w-full object-contain p-4 sm:h-64"
+                  fetchPriority="high"
+                  decoding="async"
+                />
+                <span className="absolute bottom-3 left-3 rounded-lg bg-slate-950/85 px-3 py-2 text-xs font-semibold text-white backdrop-blur">
+                  Plus de 100 logiciels
+                </span>
+              </div>
+
+              <div className="grid grid-cols-[1fr_auto] items-end gap-4 px-1 pt-5">
+                <div>
+                  <p className="text-sm text-slate-500">À partir de</p>
+                  <p className="mt-1 text-3xl font-extrabold tracking-tight text-[#0a3d62]">
+                    25 000 FCFA
+                  </p>
+                  <p className="mt-1 text-xs text-slate-500">Offre annuelle · assistance incluse</p>
+                </div>
+                <Link
+                  to="/produit/autodesk"
+                  aria-label="Découvrir l’offre Autodesk"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#0a3d62] text-white transition hover:bg-[#083050]"
+                >
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
               </div>
             </div>
 
-            <div className="relative hidden lg:block">
-              {featuredAutodesk && (
-                <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
-                  <img
-                    src="https://media.autodesk-ci.com/autodesk-ci.png?v=2"
-                    alt="Suite Autodesk — AutoCAD, Revit, 3ds Max"
-                    className="w-full h-80 object-contain bg-white"
-                    fetchPriority="high"
-                    decoding="async"
-                  />
-                  <div className="absolute top-4 right-4 bg-[#25D366] text-white px-3 py-1.5 rounded-full text-xs font-bold">
-                    Activation en 15 min
-                  </div>
-                </div>
-              )}
+            <div className="absolute -bottom-5 -left-3 hidden items-center gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3 text-slate-900 shadow-xl sm:flex">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <BadgeCheck className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-xs text-slate-500">Commande accompagnée</p>
+                <p className="text-sm font-bold">Un conseiller vous répond</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── CATÉGORIES MÉTIERS ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Trouvez le logiciel adapté à votre métier</h2>
-            <p className="text-gray-600 text-lg">Chaque catégorie regroupe les solutions les plus pertinentes pour votre activité.</p>
+      <section className="border-b border-slate-100 bg-white px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-7xl divide-y divide-slate-100 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {guarantees.map(({ icon: Icon, title, text }) => (
+            <div key={title} className="flex items-center gap-4 px-4 py-6 sm:px-6">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-[#0a3d62]">
+                <Icon className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-sm font-bold text-slate-900">{title}</p>
+                <p className="mt-0.5 text-xs text-slate-500">{text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
+            <div>
+              <span className="text-sm font-bold uppercase tracking-[.16em] text-sky-700">
+                Trouver plus vite
+              </span>
+              <h2 className="mt-3 max-w-2xl text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
+                Une solution pensée pour votre métier
+              </h2>
+            </div>
+            <Link
+              to="/catalogue"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#0a3d62] hover:underline"
+            >
+              Voir tous les logiciels
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {activeCategories.map((cat) => {
-              const Icon = categoryIcons[cat.icon] || Building2;
-              const catProducts = publishedProducts.filter((p) => p.categoryId === cat.id);
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {activeCategories.map((category) => {
+              const Icon = categoryIcons[category.icon] || Building2;
+              const productCount = publishedProducts.filter(
+                (product) => product.categoryId === category.id
+              ).length;
               return (
                 <Link
-                  key={cat.id}
-                  to={`/catalogue?categorie=${cat.slug}`}
-                  className="group p-6 rounded-2xl border border-gray-100 hover:border-navy/20 hover:bg-blue-50/30 transition-all duration-200 flex flex-col gap-3"
+                  key={category.id}
+                  to={`/catalogue?categorie=${category.slug}`}
+                  className="group rounded-2xl border border-slate-200 bg-white p-6 transition duration-200 hover:-translate-y-1 hover:border-sky-200 hover:shadow-xl hover:shadow-slate-200/60"
                 >
-                  <div className="w-12 h-12 bg-navy/8 rounded-xl flex items-center justify-center group-hover:bg-navy/12 transition-colors">
-                    <Icon className="w-6 h-6 text-navy" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 mb-1 group-hover:text-navy transition-colors">{cat.name}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">{cat.description}</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-sm font-medium text-navy mt-auto">
-                    {catProducts.length} logiciel{catProducts.length > 1 ? 's' : ''}
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </div>
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-[#0a3d62] transition group-hover:bg-[#0a3d62] group-hover:text-white">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-5 font-extrabold text-slate-900">{category.name}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-500">
+                    {category.description}
+                  </p>
+                  <span className="mt-5 flex items-center gap-1.5 text-xs font-bold text-sky-700">
+                    {productCount} solution{productCount > 1 ? 's' : ''}
+                    <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+                  </span>
                 </Link>
               );
             })}
@@ -157,284 +292,217 @@ export function Home() {
         </div>
       </section>
 
-      {/* ── AUTODESK SPOTLIGHT ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-navy to-blue-800">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-white">
-              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-                ⭐ Produit phare
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Autodesk — La suite complète pour les professionnels
-              </h2>
-              <p className="text-blue-100 text-lg mb-6 leading-relaxed">
-                AutoCAD, Revit, 3ds Max, Fusion 360, Civil 3D et plus de 100 logiciels inclus dans un seul abonnement. La solution la plus utilisée par les architectes, ingénieurs et designers du monde entier.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {[
-                  'AutoCAD 2026 inclus',
-                  'Revit pour le BIM et la construction',
-                  '3ds Max pour le rendu et l\'animation',
-                  'Fusion 360 pour la conception mécanique',
-                  'Activation en moins de 15 minutes',
-                ].map((item) => (
-                  <li key={item} className="flex items-center gap-3 text-blue-50">
-                    <CheckCircle className="w-5 h-5 text-[#25D366] flex-shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/produit/autodesk"
-                  className="inline-flex items-center gap-2 bg-white text-navy px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
-                >
-                  Voir les offres
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                {featuredAutodesk && (
-                  <WhatsAppButton
-                    message={featuredAutodesk.whatsappMessage}
-                    productId={featuredAutodesk.id}
-                    productName={featuredAutodesk.name}
-                    label="Commander sur WhatsApp"
-                  />
-                )}
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="bg-white/10 border border-white/20 rounded-2xl p-6">
-                <div className="grid grid-cols-3 gap-4 text-center text-white">
-                  <div>
-                    <div className="text-2xl font-bold">100+</div>
-                    <div className="text-xs text-blue-200 mt-1">Logiciels inclus</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">15 min</div>
-                    <div className="text-xs text-blue-200 mt-1">Activation</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold">7j/7</div>
-                    <div className="text-xs text-blue-200 mt-1">Support</div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-white/10 border border-white/20 rounded-2xl p-6 text-white">
-                <p className="text-sm text-blue-200 mb-2">À partir de</p>
-                <div className="text-4xl font-bold mb-1">25 000 FCFA</div>
-                <p className="text-blue-100 text-sm">Licence 1 an · All Apps</p>
-              </div>
-              {/* YouTube proof */}
-              <div className="rounded-2xl overflow-hidden border border-white/20">
-                <YouTubeEmbed
-                  videoId="HR1IJPxuwJs"
-                  title="Démonstration panneau administrateur Autodesk"
-                />
-              </div>
-            </div>
+      <section className="bg-[#f5f8fb] px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 text-center">
+            <span className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[.16em] text-sky-700">
+              <Sparkles className="h-4 w-4" />
+              Les plus demandés
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
+              Commencez avec une valeur sûre
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+              Des outils choisis par les architectes, ingénieurs et créateurs que nous accompagnons.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* ── PRODUITS POPULAIRES ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Logiciels populaires</h2>
-              <p className="text-gray-600">Les solutions les plus demandées par nos clients.</p>
-            </div>
-            <Link
-              to="/catalogue"
-              className="hidden sm:flex items-center gap-2 text-sm font-semibold text-navy hover:underline"
-            >
-              Tout voir <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularProducts.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-          <div className="mt-8 text-center sm:hidden">
-            <Link
-              to="/catalogue"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-navy hover:underline"
-            >
-              Voir tout le catalogue <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── AVANTAGES ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Pourquoi choisir Autodesk CI ?</h2>
-            <p className="text-gray-600 text-lg">Nous simplifions l'accès aux logiciels professionnels pour les créateurs africains.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Shield,
-                title: 'Accès officiels',
-                desc: 'Chaque logiciel est activé via les systèmes officiels des éditeurs. Vous bénéficiez des mises à jour et du support de l\'éditeur.',
-                color: 'text-blue-600 bg-blue-50',
-              },
-              {
-                icon: Zap,
-                title: 'Activation rapide',
-                desc: 'Autodesk en moins de 15 minutes. Les autres solutions en 24 à 48 heures ouvrées. Accompagnement à l\'installation inclus.',
-                color: 'text-amber-600 bg-amber-50',
-              },
-              {
-                icon: Headphones,
-                title: 'Support en français',
-                desc: 'Notre équipe est disponible du lundi au samedi pour vous aider par WhatsApp, en français, depuis votre pays.',
-                color: 'text-green-600 bg-green-50',
-              },
-              {
-                icon: Users,
-                title: 'Prix accessibles',
-                desc: 'Des tarifs adaptés au marché africain. Paiement par Mobile Money, carte bancaire ou virement. Devis pour les entreprises.',
-                color: 'text-violet-600 bg-violet-50',
-              },
-            ].map(({ icon: Icon, title, desc, color }) => (
-              <div key={title} className="p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${color}`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
-              </div>
+          <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {popularProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── PROCESSUS ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Comment ça se passe ?</h2>
-            <p className="text-gray-600 text-lg">4 étapes simples pour obtenir votre logiciel.</p>
-          </div>
-          <div className="grid md:grid-cols-4 gap-6">
-            {[
-              { num: '01', title: 'Identifiez votre besoin', desc: 'Parcourez le catalogue ou contactez-nous pour être orienté selon votre métier.' },
-              { num: '02', title: 'Choisissez votre offre', desc: 'Sélectionnez le logiciel et la durée qui vous conviennent. Plusieurs offres disponibles.' },
-              { num: '03', title: 'Confirmez via WhatsApp', desc: 'Envoyez-nous un message pour valider votre commande. Paiement Mobile Money ou virement.' },
-              { num: '04', title: 'Commencez à travailler', desc: 'Recevez vos accès et instructions. Notre équipe vous accompagne à l\'installation.' },
-            ].map(({ num, title, desc }) => (
-              <div key={num} className="text-center">
-                <div className="w-14 h-14 bg-navy text-white rounded-2xl flex items-center justify-center text-xl font-bold mx-auto mb-4">
-                  {num}
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-sm text-gray-600">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── TÉMOIGNAGES ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Ils nous font confiance</h2>
-            <p className="text-gray-600 text-lg">Des professionnels satisfaits dans toute l'Afrique francophone.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials
-              .filter((t) => t.status === 'published')
-              .slice(0, 6)
-              .map((t) => (
-                <div key={t.id} className="p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${t.color}`}>
-                      {t.initials}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 text-sm">{t.name}</div>
-                      <div className="text-xs text-gray-500">{t.role} · {t.city}</div>
-                    </div>
-                  </div>
-                  <div className="flex gap-0.5 mb-3">
-                    {Array.from({ length: t.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">"{t.text}"</p>
-                </div>
-              ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-3">Questions fréquentes</h2>
-            <p className="text-gray-600">Retrouvez les réponses aux questions les plus courantes.</p>
-          </div>
-          <div className="space-y-3">
-            {faqHome.map((faq, i) => (
-              <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900 pr-4 text-sm">{faq.q}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-navy flex-shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`}
-                  />
-                </button>
-                {openFaq === i && (
-                  <div className="px-5 pb-5">
-                    <p className="text-sm text-gray-600 leading-relaxed">{faq.a}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link to="/faq" className="text-sm font-semibold text-navy hover:underline inline-flex items-center gap-1">
-              Voir toutes les questions <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA FINAL ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-navy">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Prêt à équiper votre activité ?
-          </h2>
-          <p className="text-blue-200 text-lg mb-10 max-w-2xl mx-auto">
-            Contactez-nous sur WhatsApp pour être orienté vers la solution adaptée à votre métier et obtenir un devis personnalisé.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-[.16em] text-sky-700">
+              Simple et accompagné
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
+              Pas de parcours compliqué. On vous guide.
+            </h2>
+            <p className="mt-5 max-w-lg leading-7 text-slate-600">
+              Vous n’avez pas besoin de connaître la bonne version à l’avance. Expliquez-nous
+              votre besoin et nous vérifions l’offre avec vous avant la commande.
+            </p>
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 bg-[#25D366] text-white px-10 py-4 rounded-xl font-bold text-base hover:bg-[#20bd5a] transition-colors shadow-lg"
+              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#0a3d62] px-6 py-3.5 text-sm font-bold text-white transition hover:bg-[#083050]"
             >
-              <MessageCircle className="w-5 h-5" />
+              Parler à un conseiller
+              <MessageCircle className="h-4 w-4" />
+            </a>
+          </div>
+
+          <ol className="grid gap-4 sm:grid-cols-3">
+            {steps.map((step) => (
+              <li
+                key={step.number}
+                className="relative min-h-[220px] overflow-hidden rounded-2xl border border-slate-200 p-6"
+              >
+                <span className="absolute -right-2 -top-6 text-8xl font-black text-slate-50">
+                  {step.number}
+                </span>
+                <span className="relative text-sm font-extrabold text-sky-700">{step.number}</span>
+                <h3 className="relative mt-10 text-xl font-extrabold text-slate-900">
+                  {step.title}
+                </h3>
+                <p className="relative mt-3 text-sm leading-6 text-slate-500">{step.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {visibleTestimonials.length > 0 && (
+        <section className="bg-[#061f35] px-4 py-20 text-white sm:px-6 lg:px-8 lg:py-24">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+              <div>
+                <span className="text-sm font-bold uppercase tracking-[.16em] text-sky-300">
+                  La confiance se mérite
+                </span>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
+                  Ils ont déjà fait le pas
+                </h2>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-slate-300">
+                <div className="flex gap-0.5 text-amber-400">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <Star key={index} className="h-4 w-4 fill-current" />
+                  ))}
+                </div>
+                Avis clients vérifiés par notre équipe
+              </div>
+            </div>
+
+            <div className="mt-10 grid gap-5 lg:grid-cols-3">
+              {visibleTestimonials.map((testimonial) => (
+                <article
+                  key={testimonial.id}
+                  className="rounded-2xl border border-white/10 bg-white/[.07] p-6 backdrop-blur"
+                >
+                  <div className="flex gap-0.5 text-amber-400">
+                    {Array.from({ length: testimonial.rating }).map((_, index) => (
+                      <Star key={index} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-5 text-sm leading-7 text-slate-200">
+                    “{testimonial.text}”
+                  </blockquote>
+                  <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-5">
+                    <span
+                      className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ${testimonial.color}`}
+                    >
+                      {testimonial.initials}
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold">{testimonial.name}</p>
+                      <p className="text-xs text-slate-400">
+                        {testimonial.role} · {testimonial.city}
+                      </p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="bg-white px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[.75fr_1.25fr]">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-[.16em] text-sky-700">
+              Avant de commander
+            </span>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+              Vos questions, nos réponses
+            </h2>
+            <p className="mt-4 leading-7 text-slate-600">
+              Besoin d’une précision supplémentaire ? Notre équipe vous répond directement.
+            </p>
+            <Link
+              to="/faq"
+              className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#0a3d62] hover:underline"
+            >
+              Consulter toute la FAQ
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="divide-y divide-slate-200 border-y border-slate-200">
+            {homeFaqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div key={faq.q}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="flex w-full items-center justify-between gap-4 py-5 text-left"
+                    aria-expanded={isOpen}
+                  >
+                    <span className="font-bold text-slate-900">{faq.q}</span>
+                    <ChevronDown
+                      className={`h-5 w-5 shrink-0 text-[#0a3d62] transition-transform ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                  {isOpen && (
+                    <p className="max-w-2xl pb-5 text-sm leading-7 text-slate-600">{faq.a}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f5f8fb] px-4 pb-20 sm:px-6 lg:px-8 lg:pb-24">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#0a3d62] to-[#0f5486] px-6 py-12 text-center text-white shadow-xl sm:px-12 lg:py-16">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
+            <Zap className="h-6 w-6 text-amber-300" />
+          </span>
+          <h2 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Un projet à équiper aujourd’hui ?
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-blue-100">
+            Dites-nous ce que vous souhaitez réaliser. Nous vous orientons vers la solution
+            adaptée avant toute commande.
+          </p>
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-8 py-4 font-bold text-white transition hover:bg-[#20bd5a]"
+            >
+              <MessageCircle className="h-5 w-5" />
               Démarrer sur WhatsApp
             </a>
             <Link
               to="/catalogue"
-              className="inline-flex items-center justify-center gap-2 bg-white/10 border border-white/20 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/20 transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-8 py-4 font-bold text-white transition hover:bg-white/15"
             >
-              Voir le catalogue
-              <ArrowRight className="w-4 h-4" />
+              Voir les offres
+              <ArrowRight className="h-5 w-5" />
             </Link>
+          </div>
+          <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-blue-100">
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+              Réponse rapide
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Users className="h-4 w-4 text-emerald-300" />
+              Conseil personnalisé
+            </span>
           </div>
         </div>
       </section>

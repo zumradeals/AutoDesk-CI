@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, MessageCircle } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { ChevronDown, Headphones, Menu, MessageCircle, X } from 'lucide-react';
 import { useStore } from '../../store';
 import { buildWhatsappUrl } from '../../utils/whatsapp';
 import { cn } from '../../utils/cn';
@@ -9,26 +9,24 @@ const navItems = [
   { label: 'Accueil', to: '/' },
   { label: 'Catalogue', to: '/catalogue' },
   {
-    label: 'Métiers',
+    label: 'Solutions par métier',
     children: [
-      { label: 'Logiciels pour Architectes', to: '/metiers/architectes' },
-      { label: 'Logiciels BIM', to: '/metiers/bim' },
-      { label: 'Rendu Architectural', to: '/metiers/rendu' },
-      { label: 'Bureaux d\'Études', to: '/metiers/bureaux-etudes' },
+      { label: 'Architectes', to: '/metiers/architectes' },
+      { label: 'BIM et construction', to: '/metiers/bim' },
+      { label: 'Rendu architectural', to: '/metiers/rendu' },
+      { label: 'Bureaux d’études', to: '/metiers/bureaux-etudes' },
       { label: 'Ingénieurs', to: '/metiers/ingenieurs' },
-      { label: 'Conception Mécanique', to: '/metiers/mecanique' },
-      { label: 'Bureautique Pro', to: '/metiers/bureautique' },
+      { label: 'Conception mécanique', to: '/metiers/mecanique' },
     ],
   },
-  { label: 'À propos', to: '/a-propos' },
-  { label: 'Contact', to: '/contact' },
+  { label: 'Notre engagement', to: '/a-propos' },
+  { label: 'Aide', to: '/faq' },
 ];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { settings } = useStore();
-  const navigate = useNavigate();
 
   const whatsappUrl = buildWhatsappUrl(
     settings.whatsappNumber,
@@ -36,143 +34,153 @@ export function Header() {
   );
 
   return (
-    <header className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 z-50">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <img
-            src="/brand/autodesk-ci-logo.svg"
-            alt="Autodesk CI"
-            className="h-10 w-auto"
-          />
-        </Link>
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className="hidden bg-[#061f35] text-white sm:block">
+        <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[11px] sm:px-6 lg:px-8">
+          <span className="flex items-center gap-1.5 text-slate-300">
+            <Headphones className="h-3.5 w-3.5 text-sky-300" />
+            Assistance en français avant et après votre commande
+          </span>
+          <span className="font-semibold text-slate-200">
+            Paiement Mobile Money · Service en ligne
+          </span>
+        </div>
+      </div>
 
-        {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-6">
-          {navItems.map((item) =>
-            item.children ? (
-              <div key={item.label} className="relative" onMouseLeave={() => setDropdownOpen(false)}>
-                <button
+      <nav className="border-b border-slate-200/80 bg-white/95 shadow-sm shadow-slate-900/[.03] backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-[72px] lg:px-8">
+          <Link to="/" className="shrink-0" aria-label="Autodesk CI — Accueil">
+            <img
+              src="/brand/autodesk-ci-logo.svg"
+              alt="Autodesk CI"
+              className="h-9 w-auto sm:h-10"
+            />
+          </Link>
+
+          <div className="hidden items-center gap-7 lg:flex">
+            {navItems.map((item) =>
+              item.children ? (
+                <div
+                  key={item.label}
+                  className="relative"
                   onMouseEnter={() => setDropdownOpen(true)}
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-navy transition-colors font-medium"
+                  onMouseLeave={() => setDropdownOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen((value) => !value)}
+                    className="flex items-center gap-1 text-sm font-semibold text-slate-600 transition hover:text-[#0a3d62]"
+                    aria-expanded={dropdownOpen}
+                  >
+                    {item.label}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  {dropdownOpen && (
+                    <div className="absolute left-1/2 top-full w-64 -translate-x-1/2 pt-4">
+                      <div className="rounded-2xl border border-slate-100 bg-white p-2 shadow-2xl shadow-slate-900/10">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.to}
+                            to={child.to}
+                            onClick={() => setDropdownOpen(false)}
+                            className="block rounded-xl px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-[#0a3d62]"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <NavLink
+                  key={item.to}
+                  to={item.to!}
+                  className={({ isActive }) =>
+                    cn(
+                      'text-sm font-semibold transition',
+                      isActive ? 'text-[#0a3d62]' : 'text-slate-600 hover:text-[#0a3d62]'
+                    )
+                  }
                 >
                   {item.label}
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute top-full left-0 mt-1 w-60 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.to}
-                        to={child.to}
-                        onClick={() => setDropdownOpen(false)}
-                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-navy transition-colors"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <NavLink
-                key={item.to}
-                to={item.to!}
-                className={({ isActive }) =>
-                  cn(
-                    'text-sm font-medium transition-colors',
-                    isActive ? 'text-navy' : 'text-gray-600 hover:text-navy'
-                  )
-                }
-              >
-                {item.label}
-              </NavLink>
-            )
-          )}
-        </div>
+                </NavLink>
+              )
+            )}
+          </div>
 
-        {/* CTA */}
-        <div className="hidden lg:flex items-center gap-3">
-          <a
-            href={whatsappUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-[#20bd5a] transition-colors"
-          >
-            <MessageCircle className="w-4 h-4" />
-            WhatsApp
-          </a>
-          <button
-            onClick={() => navigate('/catalogue')}
-            className="bg-navy text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-navy-dark transition-colors"
-          >
-            Voir le catalogue
-          </button>
-        </div>
-
-        {/* Mobile toggle */}
-        <button
-          className="lg:hidden p-2 text-gray-600 hover:text-navy transition-colors"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menu"
-        >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </nav>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 py-4 px-4 space-y-1">
-          {navItems.map((item) =>
-            item.children ? (
-              <div key={item.label}>
-                <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                  {item.label}
-                </div>
-                {item.children.map((child) => (
-                  <Link
-                    key={child.to}
-                    to={child.to}
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-6 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
-                  >
-                    {child.label}
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Link
-                key={item.to}
-                to={item.to!}
-                onClick={() => setMobileOpen(false)}
-                className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg"
-              >
-                {item.label}
-              </Link>
-            )
-          )}
-          <div className="pt-4 border-t border-gray-100 flex flex-col gap-2">
+          <div className="hidden items-center gap-3 lg:flex">
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-3 rounded-lg text-sm font-semibold"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[#20bd5a]"
             >
-              <MessageCircle className="w-4 h-4" />
-              Contacter sur WhatsApp
+              <MessageCircle className="h-4 w-4" />
+              Commander
             </a>
-            <Link
-              to="/catalogue"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center bg-navy text-white px-4 py-3 rounded-lg text-sm font-semibold"
-            >
-              Voir le catalogue
-            </Link>
           </div>
+
+          <button
+            type="button"
+            className="rounded-lg p-2 text-slate-700 transition hover:bg-slate-100 lg:hidden"
+            onClick={() => setMobileOpen((value) => !value)}
+            aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
-      )}
+
+        {mobileOpen && (
+          <div className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-slate-100 bg-white px-4 py-4 lg:hidden">
+            <div className="mx-auto max-w-7xl space-y-1">
+              {navItems.map((item) =>
+                item.children ? (
+                  <div key={item.label} className="py-2">
+                    <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[.14em] text-slate-400">
+                      {item.label}
+                    </p>
+                    <div className="grid grid-cols-2 gap-1">
+                      {item.children.map((child) => (
+                        <Link
+                          key={child.to}
+                          to={child.to}
+                          onClick={() => setMobileOpen(false)}
+                          className="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    key={item.to}
+                    to={item.to!}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-lg px-3 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                  >
+                    {item.label}
+                  </Link>
+                )
+              )}
+              <div className="border-t border-slate-100 pt-4">
+                <a
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Commander sur WhatsApp
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
     </header>
   );
 }
