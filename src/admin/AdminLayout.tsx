@@ -27,9 +27,7 @@ export function AdminLayout() {
       <aside className="w-60 bg-gray-900 border-r border-gray-800 flex flex-col">
         <div className="p-5 border-b border-gray-800">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-navy font-black text-base leading-none">A</span>
-            </div>
+            <img src="/brand/favicon.svg" alt="" className="w-9 h-9 rounded-xl" />
             <div>
               <div className="text-sm font-bold text-white">Autodesk CI</div>
               <div className="text-xs text-gray-500">Administration</div>
