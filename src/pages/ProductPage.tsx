@@ -1,35 +1,73 @@
-import { useParams, Link, Navigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import {
-  CheckCircle, ChevronDown, ArrowRight, Monitor, Clock,
-  Headphones, ArrowLeft, Star
+  ArrowLeft,
+  ArrowRight,
+  BadgeCheck,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock3,
+  Headphones,
+  MessageCircle,
+  Monitor,
+  ShieldCheck,
+  Smartphone,
+  Star,
 } from 'lucide-react';
-import { useStore } from '../store';
-import { WhatsAppButton } from '../components/ui/WhatsAppButton';
-import { Badge } from '../components/ui/Badge';
 import { ProductCard } from '../components/product/ProductCard';
-import { buildProductWhatsappMessage } from '../utils/whatsapp';
+import { Badge } from '../components/ui/Badge';
+import { WhatsAppButton } from '../components/ui/WhatsAppButton';
+import { useStore } from '../store';
+import { buildProductWhatsappMessage, buildWhatsappUrl } from '../utils/whatsapp';
+
+const orderSteps = [
+  {
+    icon: MessageCircle,
+    title: 'Échangez avec nous',
+    text: 'Nous vérifions votre besoin et la bonne offre sur WhatsApp.',
+  },
+  {
+    icon: Smartphone,
+    title: 'Confirmez la commande',
+    text: 'Choisissez votre moyen de paiement disponible.',
+  },
+  {
+    icon: BadgeCheck,
+    title: 'Recevez votre solution',
+    text: 'Nous vous accompagnons pour l’accès et l’installation.',
+  },
+];
 
 export function ProductPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { products, categories } = useStore();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { products, categories, testimonials, settings } = useStore();
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [selectedOffer, setSelectedOffer] = useState(0);
 
-  const product = products.find((p) => p.slug === slug && p.status === 'published');
+  const product = products.find(
+    (currentProduct) => currentProduct.slug === slug && currentProduct.status === 'published'
+  );
+
   if (!product) return <Navigate to="/catalogue" replace />;
 
-  const category = categories.find((c) => c.id === product.categoryId);
+  const category = categories.find((currentCategory) => currentCategory.id === product.categoryId);
   const related = products.filter(
-    (p) => product.relatedProductIds.includes(p.id) && p.status === 'published'
+    (currentProduct) =>
+      product.relatedProductIds.includes(currentProduct.id) &&
+      currentProduct.status === 'published'
   );
-  const offer = product.offers[selectedOffer];
-  const mainImage = product.images.find((i) => i.isMain) || product.images[0];
+  const visibleTestimonials = testimonials
+    .filter((testimonial) => testimonial.status === 'published')
+    .slice(0, 3);
+  const offer = product.offers[selectedOffer] || product.offers[0];
+  const mainImage = product.images.find((image) => image.isMain) || product.images[0];
 
-  const whatsappMsg = offer
+  const whatsappMessage = offer
     ? buildProductWhatsappMessage(product.name, offer.label, offer.price)
     : product.whatsappMessage;
+  const whatsappUrl = buildWhatsappUrl(settings.whatsappNumber, whatsappMessage);
 
   return (
     <>
@@ -39,232 +77,424 @@ export function ProductPage() {
         <link rel="canonical" href={`https://autodesk-ci.com/produit/${product.slug}`} />
         <meta property="og:title" content={product.seoTitle} />
         <meta property="og:description" content={product.seoDescription} />
-        <script type="application/ld+json">{JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'Product',
-          name: product.name,
-          description: product.shortDescription,
-          image: mainImage?.url,
-          offers: product.offers.filter(o => o.price).map(o => ({
-            '@type': 'Offer',
-            name: o.label,
-            price: o.price,
-            priceCurrency: 'XOF',
-            availability: 'https://schema.org/InStock',
-          })),
-        })}</script>
+        {mainImage && <meta property="og:image" content={mainImage.url} />}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            description: product.shortDescription,
+            image: mainImage?.url,
+            offers: product.offers
+              .filter((currentOffer) => currentOffer.price)
+              .map((currentOffer) => ({
+                '@type': 'Offer',
+                name: currentOffer.label,
+                priceCurrency: 'XOF',
+                availability: 'https://schema.org/InStock',
+              })),
+          })}
+        </script>
       </Helmet>
 
-      {/* Breadcrumb */}
-      <div className="bg-gray-50 border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-3">
-        <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-500">
-          <Link to="/" className="hover:text-navy transition-colors">Accueil</Link>
+      <div className="border-b border-slate-100 bg-white px-4 py-3 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-hidden text-xs text-slate-500">
+          <Link to="/" className="shrink-0 transition hover:text-[#0a3d62]">
+            Accueil
+          </Link>
           <span>/</span>
-          <Link to="/catalogue" className="hover:text-navy transition-colors">Catalogue</Link>
+          <Link to="/catalogue" className="shrink-0 transition hover:text-[#0a3d62]">
+            Catalogue
+          </Link>
           {category && (
             <>
               <span>/</span>
-              <Link to={`/catalogue?categorie=${category.slug}`} className="hover:text-navy transition-colors">
+              <Link
+                to={`/catalogue?categorie=${category.slug}`}
+                className="hidden shrink-0 transition hover:text-[#0a3d62] sm:inline"
+              >
                 {category.name}
               </Link>
             </>
           )}
           <span>/</span>
-          <span className="text-gray-900 font-medium">{product.name}</span>
+          <span className="truncate font-semibold text-slate-700">{product.name}</span>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Top grid */}
-        <div className="grid lg:grid-cols-5 gap-10 mb-16">
-          {/* Left: Image + info */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Badges */}
-            <div className="flex gap-2 flex-wrap">
-              {product.isPopular && <Badge variant="popular">Populaire</Badge>}
-              {product.offers.some((o) => o.isPromo) && <Badge variant="promo">Promotion</Badge>}
+      <section className="bg-[#f5f8fb] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.1fr_.9fr] lg:gap-14">
+          <div>
+            <div className="mb-5 flex flex-wrap gap-2">
+              {product.isPopular && <Badge variant="popular">Très demandé</Badge>}
+              {product.offers.some((currentOffer) => currentOffer.isPromo) && (
+                <Badge variant="promo">Offre spéciale</Badge>
+              )}
               {category && <Badge variant="neutral">{category.name}</Badge>}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">{product.name}</h1>
-            <p className="text-lg text-gray-600">{product.shortDescription}</p>
+            <h1 className="max-w-2xl text-3xl font-extrabold leading-tight tracking-[-.025em] text-slate-950 sm:text-4xl lg:text-5xl">
+              {product.name}
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+              {product.shortDescription}
+            </p>
 
-            {/* Main image */}
+            <div className="mt-7 flex flex-wrap gap-x-5 gap-y-3 text-sm text-slate-600">
+              <span className="flex items-center gap-2">
+                <Clock3 className="h-4 w-4 text-emerald-600" />
+                {product.deliveryTime}
+              </span>
+              <span className="flex items-center gap-2">
+                <Headphones className="h-4 w-4 text-emerald-600" />
+                Assistance en français
+              </span>
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Conseil avant paiement
+              </span>
+            </div>
+
             {mainImage && (
-              <div className="rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+              <div className="relative mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-xl shadow-slate-200/50">
                 <img
                   src={mainImage.url}
                   alt={mainImage.alt}
-                  className="w-full h-72 object-cover"
+                  className="h-72 w-full object-contain p-5 sm:h-[420px]"
+                  decoding="async"
                 />
-              </div>
-            )}
-
-            {/* Description */}
-            <div className="prose prose-gray max-w-none">
-              {product.description.split('\n\n').map((para, i) => (
-                <p key={i} className="text-gray-700 leading-relaxed mb-4">{para}</p>
-              ))}
-            </div>
-
-            {/* Profils */}
-            <div>
-              <h3 className="font-bold text-gray-900 mb-3">Pour qui ?</h3>
-              <div className="flex flex-wrap gap-2">
-                {product.profiles.map((p) => (
-                  <span key={p} className="px-3 py-1.5 bg-blue-50 text-navy text-sm rounded-full font-medium">
-                    {p}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Usages */}
-            {product.usages.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-900 mb-3">Usages principaux</h3>
-                <ul className="grid sm:grid-cols-2 gap-2">
-                  {product.usages.map((u) => (
-                    <li key={u} className="flex items-start gap-2 text-sm text-gray-700">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      {u}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Avantages */}
-            {product.advantages.length > 0 && (
-              <div>
-                <h3 className="font-bold text-gray-900 mb-3">Points forts</h3>
-                <ul className="space-y-2">
-                  {product.advantages.map((a) => (
-                    <li key={a} className="flex items-start gap-2 text-sm text-gray-700">
-                      <Star className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                      {a}
-                    </li>
-                  ))}
-                </ul>
+                <span className="absolute bottom-4 left-4 rounded-xl bg-slate-950/85 px-4 py-2 text-xs font-bold text-white backdrop-blur">
+                  Visuel du produit
+                </span>
               </div>
             )}
           </div>
 
-          {/* Right: Pricing card */}
-          <div className="lg:col-span-2">
-            <div className="sticky top-20 bg-white rounded-2xl border border-gray-100 shadow-lg p-6 space-y-5">
-              <h2 className="text-lg font-bold text-gray-900">Choisir une offre</h2>
-
-              {/* Offer selector */}
-              <div className="space-y-2">
-                {product.offers.map((o, i) => (
-                  <button
-                    key={o.id}
-                    onClick={() => setSelectedOffer(i)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
-                      selectedOffer === i
-                        ? 'border-navy bg-navy/5'
-                        : 'border-gray-100 hover:border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="font-semibold text-gray-900 text-sm">{o.label}</span>
-                      {o.isPromo && <Badge variant="promo">Promo</Badge>}
-                    </div>
-                    {o.duration && <div className="text-xs text-gray-500">{o.duration}</div>}
-                    <div className="mt-2 flex items-baseline gap-2">
-                      <span className={`text-xl font-bold ${selectedOffer === i ? 'text-navy' : 'text-gray-800'}`}>
-                        {o.price || 'Sur devis'}
-                      </span>
-                      {o.oldPrice && (
-                        <span className="text-sm text-gray-400 line-through">{o.oldPrice}</span>
-                      )}
-                    </div>
-                    {o.description && (
-                      <p className="text-xs text-gray-500 mt-1">{o.description}</p>
-                    )}
-                  </button>
-                ))}
+          <aside>
+            <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-xl shadow-slate-200/50 sm:p-7 lg:sticky lg:top-32">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[.14em] text-sky-700">
+                    Choisissez votre offre
+                  </p>
+                  <h2 className="mt-2 text-xl font-extrabold text-slate-950">
+                    Prêt à démarrer ?
+                  </h2>
+                </div>
+                <span className="mt-1 h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_0_5px_rgba(16,185,129,.12)]" />
               </div>
 
-              {/* CTA */}
+              <div className="mt-6 space-y-3">
+                {product.offers.map((currentOffer, index) => {
+                  const isSelected = selectedOffer === index;
+                  return (
+                    <button
+                      key={currentOffer.id}
+                      type="button"
+                      onClick={() => setSelectedOffer(index)}
+                      className={`w-full rounded-2xl border-2 p-4 text-left transition ${
+                        isSelected
+                          ? 'border-[#0a3d62] bg-blue-50/60 shadow-sm'
+                          : 'border-slate-100 hover:border-slate-200'
+                      }`}
+                      aria-pressed={isSelected}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-bold text-slate-900">{currentOffer.label}</p>
+                          {currentOffer.duration && (
+                            <p className="mt-1 text-xs text-slate-500">{currentOffer.duration}</p>
+                          )}
+                        </div>
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                            isSelected
+                              ? 'border-[#0a3d62] bg-[#0a3d62] text-white'
+                              : 'border-slate-300'
+                          }`}
+                        >
+                          {isSelected && <Check className="h-3 w-3" />}
+                        </span>
+                      </div>
+                      <div className="mt-4 flex items-baseline gap-2">
+                        <span className="text-2xl font-extrabold tracking-tight text-[#0a3d62]">
+                          {currentOffer.price || 'Sur devis'}
+                        </span>
+                        {currentOffer.oldPrice && (
+                          <span className="text-sm text-slate-400 line-through">
+                            {currentOffer.oldPrice}
+                          </span>
+                        )}
+                      </div>
+                      {currentOffer.description && (
+                        <p className="mt-2 text-xs leading-5 text-slate-500">
+                          {currentOffer.description}
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
               <WhatsAppButton
-                message={whatsappMsg}
+                message={whatsappMessage}
                 productId={product.id}
                 productName={product.name}
-                label="Obtenir ce logiciel"
+                label="Commander sur WhatsApp"
                 size="lg"
                 fullWidth
+                className="mt-5 rounded-xl shadow-[0_14px_30px_rgba(37,211,102,.2)]"
               />
+              <p className="mt-3 text-center text-xs leading-5 text-slate-500">
+                Vous échangez avec un conseiller avant de confirmer le paiement.
+              </p>
 
-              {/* Meta info */}
-              <div className="space-y-3 pt-2 border-t border-gray-100">
-                <div className="flex items-center gap-2.5 text-sm text-gray-600">
-                  <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  {product.deliveryTime}
+              <div className="mt-6 grid gap-3 border-t border-slate-100 pt-6 text-sm text-slate-600">
+                <div className="flex items-start gap-3">
+                  <Monitor className="mt-0.5 h-4 w-4 shrink-0 text-[#0a3d62]" />
+                  <span>{product.compatibility}</span>
                 </div>
-                <div className="flex items-start gap-2.5 text-sm text-gray-600">
-                  <Monitor className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-                  {product.compatibility}
+                <div className="flex items-start gap-3">
+                  <Headphones className="mt-0.5 h-4 w-4 shrink-0 text-[#0a3d62]" />
+                  <span>{product.support}</span>
                 </div>
-                <div className="flex items-start gap-2.5 text-sm text-gray-600">
-                  <Headphones className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-                  {product.support}
+                <div className="flex items-start gap-3">
+                  <Smartphone className="mt-0.5 h-4 w-4 shrink-0 text-[#0a3d62]" />
+                  <span>Mobile Money et virement selon disponibilité</span>
                 </div>
               </div>
             </div>
-          </div>
+          </aside>
         </div>
+      </section>
 
-        {/* FAQ produit */}
-        {product.faqs.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Questions fréquentes</h2>
-            <div className="space-y-3 max-w-3xl">
-              {product.faqs
-                .sort((a, b) => a.sortOrder - b.sortOrder)
-                .map((faq, i) => (
-                  <div key={faq.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
-                    >
-                      <span className="font-semibold text-gray-900 text-sm pr-4">{faq.question}</span>
-                      <ChevronDown className={`w-5 h-5 text-navy flex-shrink-0 transition-transform ${openFaq === i ? 'rotate-180' : ''}`} />
-                    </button>
-                    {openFaq === i && (
-                      <div className="px-5 pb-5">
-                        <p className="text-sm text-gray-600 leading-relaxed">{faq.answer}</p>
-                      </div>
-                    )}
-                  </div>
-                ))}
-            </div>
-          </section>
-        )}
-
-        {/* Produits associés */}
-        {related.length > 0 && (
-          <section>
-            <div className="flex items-end justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Logiciels associés</h2>
-              <Link to="/catalogue" className="text-sm font-semibold text-navy hover:underline flex items-center gap-1">
-                Voir tout <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {related.slice(0, 3).map((p) => (
-                <ProductCard key={p.id} product={p} />
+      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[1.1fr_.9fr]">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-700">
+              Ce que vous obtenez
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+              Une solution utile, avec un accompagnement réel
+            </h2>
+            <div className="mt-6 space-y-4 text-base leading-8 text-slate-600">
+              {product.description.split('\n\n').map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
-          </section>
-        )}
 
-        <div className="mt-10">
-          <Link to="/catalogue" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-navy transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Retour au catalogue
-          </Link>
+            {product.usages.length > 0 && (
+              <div className="mt-9">
+                <h3 className="text-lg font-extrabold text-slate-900">Usages principaux</h3>
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {product.usages.map((usage) => (
+                    <li key={usage} className="flex items-start gap-3 text-sm text-slate-600">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-500" />
+                      {usage}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-[1.75rem] bg-[#061f35] p-7 text-white sm:p-9">
+            <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-300">
+              Points forts
+            </p>
+            <ul className="mt-6 space-y-5">
+              {product.advantages.map((advantage) => (
+                <li key={advantage} className="flex items-start gap-3 text-sm leading-6 text-slate-200">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300">
+                    <Check className="h-3.5 w-3.5" />
+                  </span>
+                  {advantage}
+                </li>
+              ))}
+            </ul>
+            {product.profiles.length > 0 && (
+              <div className="mt-8 border-t border-white/10 pt-7">
+                <p className="text-xs font-bold uppercase tracking-[.14em] text-slate-400">
+                  Recommandé pour
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {product.profiles.map((profile) => (
+                    <span
+                      key={profile}
+                      className="rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-xs font-semibold text-slate-100"
+                    >
+                      {profile}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f5f8fb] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-700">
+              De la demande à l’installation
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+              Comment commander ?
+            </h2>
+          </div>
+          <ol className="mt-10 grid gap-5 md:grid-cols-3">
+            {orderSteps.map(({ icon: Icon, title, text }, index) => (
+              <li key={title} className="rounded-2xl border border-slate-200 bg-white p-6">
+                <div className="flex items-center justify-between">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-[#0a3d62]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="text-sm font-black text-slate-300">0{index + 1}</span>
+                </div>
+                <h3 className="mt-5 text-lg font-extrabold text-slate-900">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-500">{text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {visibleTestimonials.length > 0 && (
+        <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-700">
+                  Expériences clients
+                </p>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+                  Ils nous ont fait confiance
+                </h2>
+              </div>
+            </div>
+            <div className="mt-9 grid gap-5 lg:grid-cols-3">
+              {visibleTestimonials.map((testimonial) => (
+                <article key={testimonial.id} className="rounded-2xl border border-slate-200 p-6">
+                  <div className="flex gap-0.5 text-amber-400">
+                    {Array.from({ length: testimonial.rating }).map((_, index) => (
+                      <Star key={index} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <blockquote className="mt-4 text-sm leading-7 text-slate-600">
+                    “{testimonial.text}”
+                  </blockquote>
+                  <p className="mt-5 text-sm font-extrabold text-slate-900">
+                    {testimonial.name}
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    {testimonial.role} · {testimonial.city}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {product.faqs.length > 0 && (
+        <section className="bg-[#f5f8fb] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[.7fr_1.3fr]">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-700">
+                Questions fréquentes
+              </p>
+              <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+                Avant de vous décider
+              </h2>
+              <p className="mt-4 leading-7 text-slate-600">
+                Une autre question ? Écrivez-nous pour recevoir une réponse adaptée à votre situation.
+              </p>
+            </div>
+            <div className="divide-y divide-slate-200 border-y border-slate-200">
+              {[...product.faqs]
+                .sort((first, second) => first.sortOrder - second.sortOrder)
+                .map((faq, index) => {
+                  const isOpen = openFaq === index;
+                  return (
+                    <div key={faq.id}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenFaq(isOpen ? null : index)}
+                        className="flex w-full items-center justify-between gap-4 py-5 text-left"
+                        aria-expanded={isOpen}
+                      >
+                        <span className="font-bold text-slate-900">{faq.question}</span>
+                        <ChevronDown
+                          className={`h-5 w-5 shrink-0 text-[#0a3d62] transition ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      {isOpen && (
+                        <p className="pb-5 text-sm leading-7 text-slate-600">{faq.answer}</p>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {related.length > 0 && (
+        <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[.14em] text-sky-700">
+                  Complétez votre équipement
+                </p>
+                <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">
+                  Logiciels associés
+                </h2>
+              </div>
+              <Link
+                to="/catalogue"
+                className="hidden items-center gap-2 text-sm font-bold text-[#0a3d62] hover:underline sm:flex"
+              >
+                Tout le catalogue
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.slice(0, 3).map((relatedProduct) => (
+                <ProductCard key={relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+            <Link
+              to="/catalogue"
+              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-[#0a3d62]"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Retour au catalogue
+            </Link>
+          </div>
+        </section>
+      )}
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 shadow-[0_-10px_30px_rgba(15,23,42,.08)] backdrop-blur lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xs font-semibold text-slate-500">{offer?.label}</p>
+            <p className="truncate text-base font-extrabold text-[#0a3d62]">
+              {offer?.price || 'Sur devis'}
+            </p>
+          </div>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-bold text-white"
+          >
+            <MessageCircle className="h-4 w-4" />
+            Commander
+          </a>
         </div>
       </div>
     </>
