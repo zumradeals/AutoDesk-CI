@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 168" role="img" aria-labelledby="title">
+  <title id="title">Autodesk CI</title>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#FFF" d="M18 145 74 40l31-22v31L85 145H58l13-26h-23l-14 26H18Zm43-48h21l8-40-29 40Z"/>
+    <path fill="#FFF" d="M42 145h108v4H37z"/>
+    <path fill="#FFF" d="m104 52 48-30 46 31-20 14-26-18-24 15v51l25 16 26-18 20 14-47 31-48-31zM210 50h27v88l-14 12-13-9z"/>
+    <path fill="#F59E0B" d="m207 39 17-11 18 11-18 12z"/>
+    <path stroke="#FFF" stroke-width="3" stroke-linecap="round" d="M12 148 70 92M75 32v-19m-10 10h20"/>
+    <text x="270" y="119" fill="#FFF" font-family="Inter,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="-3">AUTODESK</text>
+    <text x="650" y="119" fill="#FFF" font-family="Inter,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="-3">CI</text>
+  </g>
+</svg>
