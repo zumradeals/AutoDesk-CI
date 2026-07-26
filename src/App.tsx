@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -9,6 +10,7 @@ import { MetierPage } from './pages/MetierPage';
 import { About } from './pages/About';
 import { Faq } from './pages/Faq';
 import { Contact } from './pages/Contact';
+import { useStore } from './store';
 
 import { AdminLayout } from './admin/AdminLayout';
 import { AdminLogin } from './admin/AdminLogin';
@@ -21,11 +23,16 @@ import { AdminFaqs } from './admin/AdminFaqs';
 import { AdminSettings } from './admin/AdminSettings';
 
 export default function App() {
+  const initialize = useStore((state) => state.initialize);
+
+  useEffect(() => {
+    void initialize();
+  }, [initialize]);
+
   return (
     <HelmetProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public routes */}
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/catalogue" element={<Catalogue />} />
@@ -36,7 +43,6 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
           </Route>
 
-          {/* Admin routes */}
           <Route path="/admin/connexion" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
