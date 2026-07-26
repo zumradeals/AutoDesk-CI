@@ -16,5 +16,5 @@ export const defaultSettings: SiteSetting = {
   accentColor: '#25D366',
   seoSiteTitle: 'Autodesk CI — Logiciels Professionnels en Côte d\'Ivoire',
   seoSiteDescription: 'Autodesk CI, votre partenaire pour les logiciels professionnels en Afrique francophone. AutoCAD, Revit, SolidWorks, Lumion, SketchUp et plus.',
-  facebookPixelId: '25061845316758721',
+  facebookPixelId: '846587605055234',
 };
