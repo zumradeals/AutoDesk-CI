@@ -15,6 +15,7 @@ declare global {
 }
 
 const pixelId = import.meta.env.VITE_META_PIXEL_ID?.trim();
+const productionHostnames = new Set(['autodesk-ci.com', 'www.autodesk-ci.com']);
 let initialized = false;
 
 function isValidPixelId(value: string | undefined): value is string {
@@ -50,6 +51,7 @@ function installFbq(): Fbq {
 export function initMetaPixel(): boolean {
   if (
     typeof window === 'undefined' ||
+    !productionHostnames.has(window.location.hostname) ||
     !isValidPixelId(pixelId) ||
     initialized
   ) {
