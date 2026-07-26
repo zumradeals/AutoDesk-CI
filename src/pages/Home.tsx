@@ -81,7 +81,7 @@ export function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const publishedProducts = products.filter((product) => product.status === 'published');
-  const popularProducts = publishedProducts.filter((product) => product.isPopular).slice(0, 4);
+  const popularProducts = publishedProducts.filter((product) => product.isPopular).slice(0, 3);
   const featuredAutodesk = publishedProducts.find((product) => product.slug === 'autodesk');
   const activeCategories = categories.filter((category) => category.status === 'active').slice(0, 4);
   const visibleTestimonials = testimonials
@@ -307,7 +307,7 @@ export function Home() {
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {popularProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
