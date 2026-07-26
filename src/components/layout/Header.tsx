@@ -40,10 +40,11 @@ export function Header() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-8 h-8 bg-navy rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-base leading-none">A</span>
-          </div>
-          <span className="text-lg font-bold text-navy">Autodesk CI</span>
+          <img
+            src="/brand/autodesk-ci-logo.svg"
+            alt="Autodesk CI"
+            className="h-10 w-auto"
+          />
         </Link>
 
         {/* Desktop nav */}

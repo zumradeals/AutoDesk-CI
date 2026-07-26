@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">ACI</title>
+  <rect width="256" height="256" rx="52" fill="#061F36"/>
+  <path fill="#FFF" d="m20 205 57-118 33-24v35l-43 107H38l14-29H28z"/>
+  <path fill="#1677B8" d="m94 98 51-34 47 33-21 15-27-19-25 17v55l26 17 28-19 21 15-49 34-51-34z"/>
+  <path fill="#1677B8" d="M204 92h28v101l-14 13-14-10z"/>
+  <path fill="#F59E0B" d="m201 78 17-12 19 12-19 13z"/>
+</svg>

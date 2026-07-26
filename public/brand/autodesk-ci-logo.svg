@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 168" role="img" aria-labelledby="title desc">
+  <title id="title">Autodesk CI</title>
+  <desc id="desc">Monogramme architectural ACI et nom Autodesk CI</desc>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#073F63" d="M18 145 74 40l31-22v31L85 145H58l13-26h-23l-14 26H18Zm43-48h21l8-40-29 40Z"/>
+    <path fill="#073F63" d="M42 145h108v4H37z"/>
+    <path fill="#1677B8" d="m104 52 48-30 46 31-20 14-26-18-24 15v51l25 16 26-18 20 14-47 31-48-31z"/>
+    <path fill="#1677B8" d="M210 50h27v88l-14 12-13-9z"/>
+    <path fill="#F59E0B" d="m207 39 17-11 18 11-18 12z"/>
+    <path stroke="#073F63" stroke-width="3" stroke-linecap="round" d="M12 148 70 92M75 32v-19m-10 10h20"/>
+    <text x="270" y="119" fill="#073F63" font-family="Inter,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="-3">AUTODESK</text>
+    <text x="650" y="119" fill="#1677B8" font-family="Inter,Arial,sans-serif" font-size="74" font-weight="800" letter-spacing="-3">CI</text>
+  </g>
+</svg>

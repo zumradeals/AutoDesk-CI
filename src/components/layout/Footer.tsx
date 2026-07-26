@@ -14,10 +14,11 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-                <span className="text-navy font-black text-base leading-none">A</span>
-              </div>
-              <span className="text-lg font-bold text-white">{settings.logoText}</span>
+              <img
+                src="/brand/autodesk-ci-logo-white.svg"
+                alt={settings.logoText}
+                className="h-10 w-auto max-w-[210px]"
+              />
             </div>
             <p className="text-sm leading-relaxed mb-6">
               Votre partenaire pour les logiciels professionnels en Afrique francophone. Autodesk, SolidWorks, Lumion et plus.
